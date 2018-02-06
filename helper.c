@@ -73,7 +73,7 @@ PHP_FUNCTION(confirm_helper_compiled)
 */
 
 /**
- * {{{ php_function array_get_ext(array, key, default) }}}
+ * {{{ php_function array_get(array, key, default) }}}
  * 
  **/
 PHP_FUNCTION(array_get)
@@ -83,13 +83,11 @@ PHP_FUNCTION(array_get)
 	zval *defaultval = NULL; // default value
 	zval *retval;
 	HashTable *arrHashTable;
-
 	zval *dest_entry;
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "zS|z", &arr, 
 		&strkey, &defaultval) == FAILURE) {
 		return;
 	}
-
 	if ((retval = zend_hash_find(Z_ARRVAL_P(arr), strkey)) != NULL){
 		RETURN_ZVAL(retval, 1, 0);
 	} 
@@ -97,7 +95,6 @@ PHP_FUNCTION(array_get)
 	if (zend_memrchr(ZSTR_VAL(strkey), '.', ZSTR_LEN(strkey))) {
 		char *entry, *ptr, *seg;
 		HashTable *target = Z_ARRVAL_P(arr);
-
 		entry = estrndup(ZSTR_VAL(strkey), ZSTR_LEN(strkey));
 		if ((seg = php_strtok_r(entry, ".", &ptr))) {
 			do {
@@ -123,6 +120,27 @@ PHP_FUNCTION(array_get)
 	} else {
 		RETURN_NULL();
 	}
+}
+
+/**
+ * {{{ php_function start_with(str, key) }}}
+ * 
+ **/
+PHP_FUNCTION(start_with)
+{
+	char *str;
+	size_t strlen;
+	zval *key;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sz", &str, 
+		&strlen, &key) == FAILURE) {
+		return;
+	}
+	is (!key) {
+		RETURN_BOOL(0);
+	}
+
+	RETURN_BOOL(1);
 }
 
 /**{{{  php_function self_concats }}}**/
@@ -232,6 +250,7 @@ const zend_function_entry helper_functions[] = {
 	PHP_FE(confirm_helper_compiled,	NULL)		/* For testing, remove later. */
 	PHP_FE(self_concats,	NULL)
 	PHP_FE(array_get,	NULL)
+	PHP_FE(start_with,	NULL)
 	PHP_FE_END	/* Must be the last line in helper_functions[] */
 };
 /* }}} */
