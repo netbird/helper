@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author:                                                              |
+  | Author: fuyuan <yufuyuan2005@126.com>                                                        |
   +----------------------------------------------------------------------+
 */
 
@@ -32,7 +32,6 @@ ZEND_DECLARE_MODULE_GLOBALS(helper)
 */
 
 /* True global resources - no need for thread safety here */
-static int le_helper;
 
 /* {{{ PHP_INI
  */
@@ -48,23 +47,6 @@ PHP_INI_END()
    so that your module can be compiled into PHP, it exists only for testing
    purposes. */
 
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string confirm_helper_compiled(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_helper_compiled)
-{
-	char *arg = NULL;
-	size_t arg_len, len;
-	zend_string *strg;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &arg, &arg_len) == FAILURE) {
-		return;
-	}
-
-	strg = strpprintf(0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "helper", arg);
-
-	RETURN_STR(strg);
-}
 /* }}} */
 /* The previous line is meant for vim and emacs, so it can correctly fold and
    unfold functions in source code. See the corresponding marks just before
@@ -120,27 +102,6 @@ PHP_FUNCTION(array_get)
 	} else {
 		RETURN_NULL();
 	}
-}
-
-/**
- * {{{ php_function start_with(str, key) }}}
- * 
- **/
-PHP_FUNCTION(start_with)
-{
-	char *str;
-	size_t strlen;
-	zval *key;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sz", &str, 
-		&strlen, &key) == FAILURE) {
-		return;
-	}
-	is (!key) {
-		RETURN_BOOL(0);
-	}
-
-	RETURN_BOOL(1);
 }
 
 /**{{{  php_function self_concats }}}**/
@@ -247,10 +208,8 @@ PHP_MINFO_FUNCTION(helper)
  * Every user visible function must have an entry in helper_functions[].
  */
 const zend_function_entry helper_functions[] = {
-	PHP_FE(confirm_helper_compiled,	NULL)		/* For testing, remove later. */
 	PHP_FE(self_concats,	NULL)
 	PHP_FE(array_get,	NULL)
-	PHP_FE(start_with,	NULL)
 	PHP_FE_END	/* Must be the last line in helper_functions[] */
 };
 /* }}} */
